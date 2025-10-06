@@ -817,43 +817,43 @@
         }
 
 
+let currentMeals = { broward: 'breakfast', gator: 'breakfast' };
+let trackedItems = [];
+let dailyGoals = { calories: 2000, protein: 150, carbs: 250, fat: 70 };
+let recommendedItems = [];
+let dailyHistory = [];
+let menuDataStructured = {};
 
-        let currentMeals = { broward: 'breakfast', gator: 'breakfast' };
-        let trackedItems = [];
-        let dailyGoals = { calories: 2000, protein: 150, carbs: 250, fat: 70 };
-        let recommendedItems = [];
-        let dailyHistory = [];
-
-        function init() {
-            loadMenuData();
-            loadGoals();
-            loadHistory();
-            renderMenu('broward');
-            renderMenu('gator');
-            setupSearchListeners();
-            updateTracker();
-        }
-
-        function MenuData() {
-    if (typeof window.menuData !== 'undefined' && window.menuData.broward_breakfast) {
-        window.MenuData = {
-            broward: {
-                breakfast: window.menuData.broward_breakfast || [],
-                lunch: window.menuData.broward_lunch || [],
-                dinner: window.menuData.broward_dinner || []
-            },
-            gator: {
-                breakfast: window.menuData.gator_corner_breakfast || [],
-                lunch: window.menuData.gator_corner_lunch || [],
-                dinner: window.menuData.gator_corner_dinner || []
-            }
-        };
-        console.log('Menu data loaded successfully');
-    } else {
-        console.error('menuData.js not loaded!');
-    }
+function init() {
+    loadMenuData();
+    loadGoals();
+    loadHistory();
+    renderMenu('broward');
+    renderMenu('gator');
+    setupSearchListeners();
+    updateTracker();
 }
 
+function loadMenuData() {
+    // Restructure the flat menuData into nested structure
+    if (typeof menuData !== 'undefined') {
+        menuDataStructured = {
+            broward: {
+                breakfast: menuData.broward_breakfast || [],
+                lunch: menuData.broward_lunch || [],
+                dinner: menuData.broward_dinner || []
+            },
+            gator: {
+                breakfast: menuData.gator_corner_breakfast || [],
+                lunch: menuData.gator_corner_lunch || [],
+                dinner: menuData.gator_corner_dinner || []
+            }
+        };
+        console.log('Menu data loaded:', menuDataStructured);
+    } else {
+        console.error('menuData not found! Make sure menuData.js is loaded.');
+    }
+}
         function loadGoals() {
             const saved = localStorage.getItem('dailyGoals');
             if (saved) {
@@ -905,42 +905,44 @@
             renderMenu(hall);
         }
 
-        function renderMenu(hall, searchTerm = '') {
-            const meal = currentMeals[hall];
-            const items = menuData[hall][meal];
-            const container = document.getElementById(`${hall}-menu`);
-            
-            if (!items || items.length === 0) {
-                container.innerHTML = '<div class="empty-state">No menu items available</div>';
-                return;
-            }
-            
-            const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm));
-            
-            if (filteredItems.length === 0) {
-                container.innerHTML = '<div class="empty-state">No items found</div>';
-                return;
-            }
-            
-            container.innerHTML = filteredItems.map(item => {
-                const isRecommended = recommendedItems.some(r => r.name === item.name);
-                const itemJson = JSON.stringify(item).replace(/"/g, '&quot;');
-                return `
-                    <div class="menu-item ${isRecommended ? 'recommended' : ''}">
-                        <div class="item-info">
-                            <div class="item-name">
-                                ${item.name}
-                                ${isRecommended ? '<span class="recommended-badge">AI Pick</span>' : ''}
-                            </div>
-                            <div class="item-stats">
-                                ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
-                            </div>
-                        </div>
-                        <button class="add-btn" onclick='addItem(${itemJson})'>Add</button>
+function renderMenu(hall, searchTerm = '') {
+    const meal = currentMeals[hall];
+    const items = menuDataStructured[hall]?.[meal] || [];
+    const container = document.getElementById(`${hall}-menu`);
+    
+    console.log(`Rendering ${hall} ${meal}:`, items.length, 'items');
+    
+    if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">No menu items available</div>';
+        return;
+    }
+    
+    const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm));
+    
+    if (filteredItems.length === 0) {
+        container.innerHTML = '<div class="empty-state">No items found</div>';
+        return;
+    }
+    
+    container.innerHTML = filteredItems.map(item => {
+        const isRecommended = recommendedItems.some(r => r.name === item.name);
+        const itemJson = JSON.stringify(item).replace(/"/g, '&quot;');
+        return `
+            <div class="menu-item ${isRecommended ? 'recommended' : ''}">
+                <div class="item-info">
+                    <div class="item-name">
+                        ${item.name}
+                        ${isRecommended ? '<span class="recommended-badge">AI Pick</span>' : ''}
                     </div>
-                `;
-            }).join('');
-        }
+                    <div class="item-stats">
+                        ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
+                    </div>
+                </div>
+                <button class="add-btn" onclick='addItem(${itemJson})'>Add</button>
+            </div>
+        `;
+    }).join('');
+}
 
         function addItem(item) {
             trackedItems.push({ ...item, id: Date.now() });
@@ -1034,10 +1036,10 @@
                 fat: dailyGoals.fat - totals.fat
             };
 
-            const allItems = [
-                ...menuData.broward[currentMeals.broward].map(i => ({...i, hall: 'Broward', meal: currentMeals.broward})),
-                ...menuData.gator[currentMeals.gator].map(i => ({...i, hall: 'Gator Corner', meal: currentMeals.gator}))
-            ];
+const allItems = [
+    ...menuDataStructured.broward[currentMeals.broward].map(i => ({...i, hall: 'Broward', meal: currentMeals.broward})),
+    ...menuDataStructured.gator[currentMeals.gator].map(i => ({...i, hall: 'Gator Corner', meal: currentMeals.gator}))
+];
 
             recommendedItems = getRecommendations(remaining, allItems);
 
@@ -1213,4 +1215,3 @@
     </script>
 </body>
 </html>
-
