@@ -817,6 +817,7 @@
         }
 
 
+
         let currentMeals = { broward: 'breakfast', gator: 'breakfast' };
         let trackedItems = [];
         let dailyGoals = { calories: 2000, protein: 150, carbs: 250, fat: 70 };
@@ -833,7 +834,7 @@
             updateTracker();
         }
 
-function loadMenuData() {
+        function MenuData() {
     if (typeof window.menuData !== 'undefined' && window.menuData.broward_breakfast) {
         window.localMenuData = {
             broward: {
@@ -1212,5 +1213,3 @@ function loadMenuData() {
     </script>
 </body>
 </html>
-
-
