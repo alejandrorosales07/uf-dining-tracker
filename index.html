@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0021A5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UF Dining">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <title>UF Dining Tracker</title>
     <style>
         * {
@@ -12,10 +18,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #0021A5 0%, #FA4616 100%);
             min-height: 100vh;
             padding: 20px;
+            padding-bottom: 80px;
         }
 
         .container {
@@ -42,6 +49,73 @@
         .subtitle {
             font-size: 1.1em;
             opacity: 0.9;
+        }
+
+        .install-prompt {
+            background: rgba(250, 70, 22, 0.95);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .install-prompt.show {
+            display: flex;
+        }
+
+        .install-btn {
+            background: white;
+            color: #FA4616;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 25px;
+            background: white;
+            color: #0021A5;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn.ai {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn.history {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
         }
 
         .main-content {
@@ -83,6 +157,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab {
@@ -93,6 +168,7 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .tab:hover {
@@ -118,11 +194,17 @@
             border-radius: 10px;
             transition: all 0.3s;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .menu-item:hover {
+        .menu-item:active {
             background: #e9ecef;
-            transform: translateX(5px);
+            transform: scale(0.98);
+        }
+
+        .menu-item.recommended {
+            background: linear-gradient(135deg, #667eea22 0%, #764ba244 100%);
+            border: 2px solid #667eea;
         }
 
         .item-info {
@@ -140,8 +222,18 @@
             color: #666;
         }
 
+        .recommended-badge {
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
         .add-btn {
-            padding: 8px 20px;
+            padding: 10px 20px;
             background: #FA4616;
             color: white;
             border: none;
@@ -149,11 +241,12 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .add-btn:hover {
+        .add-btn:active {
             background: #d63a12;
-            transform: scale(1.05);
+            transform: scale(0.95);
         }
 
         .tracker-panel {
@@ -173,6 +266,20 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 2px solid #0021A5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-goals-btn {
+            background: #0021A5;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .daily-goals {
@@ -211,6 +318,10 @@
             font-size: 0.85em;
         }
 
+        .progress-fill.over {
+            background: linear-gradient(90deg, #dc3545, #c82333);
+        }
+
         .tracked-items {
             margin-top: 20px;
         }
@@ -245,9 +356,10 @@
             cursor: pointer;
             font-size: 0.85em;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .remove-btn:hover {
+        .remove-btn:active {
             background: #c82333;
         }
 
@@ -262,9 +374,10 @@
             font-weight: 600;
             margin-top: 15px;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .clear-all-btn:hover {
+        .clear-all-btn:active {
             background: #5a6268;
         }
 
@@ -297,6 +410,175 @@
             color: #333;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0021A5;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #0021A5;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .ai-section {
+            margin-bottom: 25px;
+        }
+
+        .ai-chat {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        .ai-message {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-message.assistant {
+            background: linear-gradient(135deg, #667eea22 0%, #764ba244 100%);
+            border-left: 4px solid #667eea;
+        }
+
+        .ai-message strong {
+            color: #0021A5;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .recommendation-item:hover {
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0021A5;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #0021A5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #001580;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #0021A5;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: #0021A5;
+            margin-bottom: 8px;
+        }
+
+        .history-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -306,6 +588,18 @@
                 position: relative;
                 top: 0;
                 max-height: none;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                min-width: 100%;
             }
         }
 
@@ -329,18 +623,38 @@
             outline: none;
             border-color: #0021A5;
         }
+
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="install-prompt" id="install-prompt">
+            <span>📱 Install UF Dining Tracker as an app!</span>
+            <button class="install-btn" id="install-button">Install</button>
+        </div>
+
         <header>
             <h1>🐊 UF Dining Tracker</h1>
             <p class="subtitle">Track your nutrition from Broward Dining Hall & Gator Corner</p>
         </header>
 
+        <div class="action-buttons">
+            <button class="action-btn ai" onclick="openAIAssistant()">
+                🤖 AI Meal Assistant
+            </button>
+            <button class="action-btn history" onclick="openHistory()">
+                📊 View History
+            </button>
+        </div>
+
         <div class="main-content">
             <div class="dining-halls">
-                <!-- Broward Dining Hall -->
                 <div class="hall-card">
                     <div class="hall-header">
                         <div class="hall-name">Broward Dining Hall</div>
@@ -354,7 +668,6 @@
                     <div class="menu-items" id="broward-menu"></div>
                 </div>
 
-                <!-- Gator Corner -->
                 <div class="hall-card">
                     <div class="hall-header">
                         <div class="hall-name">Gator Corner</div>
@@ -369,9 +682,11 @@
                 </div>
             </div>
 
-            <!-- Tracker Panel -->
             <div class="tracker-panel">
-                <div class="tracker-header">Daily Tracker</div>
+                <div class="tracker-header">
+                    Daily Tracker
+                    <button class="edit-goals-btn" onclick="openGoalsEditor()">Edit Goals</button>
+                </div>
                 
                 <div class="daily-goals">
                     <div class="goal-item">
@@ -447,8 +762,88 @@
         </div>
     </div>
 
+    <!-- AI Assistant Modal -->
+    <div class="modal" id="ai-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🤖 AI Meal Assistant</div>
+                <button class="close-btn" onclick="closeModal('ai-modal')">&times;</button>
+            </div>
+            <div class="ai-section">
+                <div id="ai-recommendations"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goals Editor Modal -->
+    <div class="modal" id="goals-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Edit Daily Goals</div>
+                <button class="close-btn" onclick="closeModal('goals-modal')">&times;</button>
+            </div>
+            <form onsubmit="saveGoals(event)">
+                <div class="form-group">
+                    <label class="form-label">Daily Calorie Goal</label>
+                    <input type="number" class="form-input" id="goal-calories" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Protein Goal (g)</label>
+                    <input type="number" class="form-input" id="goal-protein" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Carbs Goal (g)</label>
+                    <input type="number" class="form-input" id="goal-carbs" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fat Goal (g)</label>
+                    <input type="number" class="form-input" id="goal-fat" required>
+                </div>
+                <button type="submit" class="submit-btn">Save Goals</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">📊 Nutrition History</div>
+                <button class="close-btn" onclick="closeModal('history-modal')">&times;</button>
+            </div>
+            <div class="history-list" id="history-list"></div>
+        </div>
+    </div>
+
     <script>
-        // Sample menu data - in production, this would come from an API
+        // PWA Installation
+        let deferredPrompt;
+        const installPrompt = document.getElementById('install-prompt');
+        const installButton = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installPrompt.classList.add('show');
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installPrompt.classList.remove('show');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+
         const menuData = {
             broward: {
                 breakfast: [
@@ -511,17 +906,54 @@
             }
         };
 
-        // State management
         let currentMeals = { broward: 'breakfast', gator: 'breakfast' };
         let trackedItems = [];
         let dailyGoals = { calories: 2000, protein: 150, carbs: 250, fat: 70 };
+        let recommendedItems = [];
+        let dailyHistory = [];
 
-        // Initialize
         function init() {
+            loadGoals();
+            loadHistory();
             renderMenu('broward');
             renderMenu('gator');
             setupSearchListeners();
             updateTracker();
+        }
+
+        function loadGoals() {
+            const saved = localStorage.getItem('dailyGoals');
+            if (saved) {
+                dailyGoals = JSON.parse(saved);
+            }
+        }
+
+        function loadHistory() {
+            const saved = localStorage.getItem('nutritionHistory');
+            if (saved) {
+                dailyHistory = JSON.parse(saved);
+            }
+        }
+
+        function saveHistory() {
+            const today = new Date().toISOString().split('T')[0];
+            const totals = calculateTotals();
+            
+            const existingIndex = dailyHistory.findIndex(h => h.date === today);
+            const historyEntry = {
+                date: today,
+                ...totals,
+                items: trackedItems.length
+            };
+
+            if (existingIndex >= 0) {
+                dailyHistory[existingIndex] = historyEntry;
+            } else {
+                dailyHistory.unshift(historyEntry);
+            }
+
+            dailyHistory = dailyHistory.slice(0, 30);
+            localStorage.setItem('nutritionHistory', JSON.stringify(dailyHistory));
         }
 
         function setupSearchListeners() {
@@ -535,14 +967,12 @@
 
         function switchMeal(hall, meal) {
             currentMeals[hall] = meal;
-            
-            // Update active tab
-            const tabs = document.querySelectorAll(`#${hall}-menu`).parentNode.parentNode.querySelectorAll('.tab');
+            const card = document.getElementById(`${hall}-menu`).closest('.hall-card');
+            const tabs = card.querySelectorAll('.tab');
             tabs.forEach((tab, i) => {
                 const meals = ['breakfast', 'lunch', 'dinner'];
                 tab.classList.toggle('active', meals[i] === meal);
             });
-            
             renderMenu(hall);
         }
 
@@ -560,38 +990,47 @@
                 return;
             }
             
-            container.innerHTML = filteredItems.map(item => `
-                <div class="menu-item">
-                    <div class="item-info">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-stats">
-                            ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
+            container.innerHTML = filteredItems.map(item => {
+                const isRecommended = recommendedItems.some(r => r.name === item.name);
+                return `
+                    <div class="menu-item ${isRecommended ? 'recommended' : ''}">
+                        <div class="item-info">
+                            <div class="item-name">
+                                ${item.name}
+                                ${isRecommended ? '<span class="recommended-badge">AI Pick</span>' : ''}
+                            </div>
+                            <div class="item-stats">
+                                ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
+                            </div>
                         </div>
+                        <button class="add-btn" onclick='addItem(${JSON.stringify(item)})'>Add</button>
                     </div>
-                    <button class="add-btn" onclick='addItem(${JSON.stringify(item)})'>Add</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function addItem(item) {
             trackedItems.push({ ...item, id: Date.now() });
             updateTracker();
+            saveHistory();
         }
 
         function removeItem(id) {
             trackedItems = trackedItems.filter(item => item.id !== id);
             updateTracker();
+            saveHistory();
         }
 
         function clearAll() {
             if (trackedItems.length > 0 && confirm('Clear all tracked items?')) {
                 trackedItems = [];
                 updateTracker();
+                saveHistory();
             }
         }
 
-        function updateTracker() {
-            const totals = trackedItems.reduce((acc, item) => ({
+        function calculateTotals() {
+            return trackedItems.reduce((acc, item) => ({
                 calories: acc.calories + item.calories,
                 protein: acc.protein + item.protein,
                 carbs: acc.carbs + item.carbs,
@@ -601,20 +1040,21 @@
                 sodium: acc.sodium + item.sodium,
                 cholesterol: acc.cholesterol + item.cholesterol
             }), { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0, sodium: 0, cholesterol: 0 });
+        }
 
-            // Update progress bars
+        function updateTracker() {
+            const totals = calculateTotals();
+
             updateProgressBar('cal', totals.calories, dailyGoals.calories, 'kcal');
             updateProgressBar('protein', totals.protein, dailyGoals.protein, 'g');
             updateProgressBar('carbs', totals.carbs, dailyGoals.carbs, 'g');
             updateProgressBar('fat', totals.fat, dailyGoals.fat, 'g');
 
-            // Update additional nutrients
             document.getElementById('fiber-val').textContent = `${Math.round(totals.fiber)}g`;
             document.getElementById('sugar-val').textContent = `${Math.round(totals.sugar)}g`;
             document.getElementById('sodium-val').textContent = `${Math.round(totals.sodium)}mg`;
             document.getElementById('cholesterol-val').textContent = `${Math.round(totals.cholesterol)}mg`;
 
-            // Update tracked items list
             const trackedList = document.getElementById('tracked-list');
             if (trackedItems.length === 0) {
                 trackedList.innerHTML = '<div class="empty-state">No items tracked yet</div>';
@@ -639,6 +1079,12 @@
             bar.style.width = `${percentage}%`;
             progress.textContent = `${Math.round(current)}${unit} / ${goal}${unit}`;
             
+            if (current > goal) {
+                bar.classList.add('over');
+            } else {
+                bar.classList.remove('over');
+            }
+            
             if (percentage > 0) {
                 bar.textContent = `${Math.round(percentage)}%`;
             } else {
@@ -646,7 +1092,192 @@
             }
         }
 
-        // Initialize on load
+        function openAIAssistant() {
+            const totals = calculateTotals();
+            const remaining = {
+                calories: dailyGoals.calories - totals.calories,
+                protein: dailyGoals.protein - totals.protein,
+                carbs: dailyGoals.carbs - totals.carbs,
+                fat: dailyGoals.fat - totals.fat
+            };
+
+            const allItems = [
+                ...menuData.broward[currentMeals.broward].map(i => ({...i, hall: 'Broward', meal: currentMeals.broward})),
+                ...menuData.gator[currentMeals.gator].map(i => ({...i, hall: 'Gator Corner', meal: currentMeals.gator}))
+            ];
+
+            recommendedItems = getRecommendations(remaining, allItems);
+
+            const aiContent = document.getElementById('ai-recommendations');
+            
+            if (remaining.calories <= 0) {
+                aiContent.innerHTML = `
+                    <div class="ai-message assistant">
+                        <strong>🎯 Goal Status:</strong>
+                        <p>You've already met your calorie goal for today! Great job staying on track.</p>
+                        <p>Current totals: ${Math.round(totals.calories)} calories, ${Math.round(totals.protein)}g protein, ${Math.round(totals.carbs)}g carbs, ${Math.round(totals.fat)}g fat</p>
+                    </div>
+                `;
+            } else {
+                aiContent.innerHTML = `
+                    <div class="ai-message assistant">
+                        <strong>🎯 Remaining Goals:</strong>
+                        <p>Calories: ${Math.round(remaining.calories)} cal | Protein: ${Math.round(remaining.protein)}g | Carbs: ${Math.round(remaining.carbs)}g | Fat: ${Math.round(remaining.fat)}g</p>
+                    </div>
+                    <div class="ai-message assistant">
+                        <strong>💡 AI Recommendations:</strong>
+                        <p>Based on your remaining macros, here are my top picks:</p>
+                        ${recommendedItems.map((item, idx) => `
+                            <div class="recommendation-item">
+                                <strong>${idx + 1}. ${item.name}</strong> (${item.hall} - ${item.meal})
+                                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                                    ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
+                                </div>
+                                <div style="font-size: 0.85em; color: #667eea; margin-top: 5px;">
+                                    ${item.reason}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            renderMenu('broward');
+            renderMenu('gator');
+            document.getElementById('ai-modal').classList.add('show');
+        }
+
+        function getRecommendations(remaining, items) {
+            const scored = items.map(item => {
+                let score = 0;
+                let reasons = [];
+
+                if (item.calories > 0 && item.calories <= remaining.calories) {
+                    const calRatio = item.calories / remaining.calories;
+                    score += (1 - Math.abs(0.5 - calRatio)) * 30;
+                }
+
+                if (remaining.protein > 10 && item.protein >= 20) {
+                    score += 25;
+                    reasons.push('High protein');
+                }
+
+                const proteinRatio = remaining.protein > 0 ? item.protein / remaining.protein : 0;
+                if (proteinRatio > 0.2 && proteinRatio < 0.8) {
+                    score += 20;
+                }
+
+                const carbRatio = remaining.carbs > 0 ? item.carbs / remaining.carbs : 0;
+                if (carbRatio > 0.2 && carbRatio < 0.8) {
+                    score += 15;
+                }
+
+                const fatRatio = remaining.fat > 0 ? item.fat / remaining.fat : 0;
+                if (fatRatio > 0.2 && fatRatio < 0.8) {
+                    score += 15;
+                }
+
+                if (item.fiber >= 5) {
+                    score += 10;
+                    reasons.push('Good fiber source');
+                }
+
+                if (item.sodium < 600) {
+                    score += 5;
+                }
+
+                const macroBalance = Math.abs(proteinRatio - 0.4) + Math.abs(carbRatio - 0.4) + Math.abs(fatRatio - 0.4);
+                if (macroBalance < 0.5) {
+                    reasons.push('Well-balanced macros');
+                    score += 15;
+                }
+
+                if (reasons.length === 0) {
+                    reasons.push('Fits within your remaining calories');
+                }
+
+                return { ...item, score, reason: reasons.join(', ') };
+            });
+
+            return scored
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+        }
+
+        function openGoalsEditor() {
+            document.getElementById('goal-calories').value = dailyGoals.calories;
+            document.getElementById('goal-protein').value = dailyGoals.protein;
+            document.getElementById('goal-carbs').value = dailyGoals.carbs;
+            document.getElementById('goal-fat').value = dailyGoals.fat;
+            document.getElementById('goals-modal').classList.add('show');
+        }
+
+        function saveGoals(event) {
+            event.preventDefault();
+            dailyGoals = {
+                calories: parseInt(document.getElementById('goal-calories').value),
+                protein: parseInt(document.getElementById('goal-protein').value),
+                carbs: parseInt(document.getElementById('goal-carbs').value),
+                fat: parseInt(document.getElementById('goal-fat').value)
+            };
+            localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+            updateTracker();
+            closeModal('goals-modal');
+        }
+
+        function openHistory() {
+            const historyList = document.getElementById('history-list');
+            
+            if (dailyHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-state">No history yet. Start tracking to see your progress!</div>';
+            } else {
+                historyList.innerHTML = dailyHistory.map(day => `
+                    <div class="history-item">
+                        <div class="history-date">${formatDate(day.date)}</div>
+                        <div class="history-stats">
+                            <div>📊 ${Math.round(day.calories)} calories</div>
+                            <div>🥩 ${Math.round(day.protein)}g protein</div>
+                            <div>🍞 ${Math.round(day.carbs)}g carbs</div>
+                            <div>🥑 ${Math.round(day.fat)}g fat</div>
+                            <div>🍽️ ${day.items} items</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('history-modal').classList.add('show');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            if (modalId === 'ai-modal') {
+                recommendedItems = [];
+                renderMenu('broward');
+                renderMenu('gator');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+
         init();
     </script>
 </body>
