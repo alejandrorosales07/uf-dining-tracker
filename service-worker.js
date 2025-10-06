@@ -1,7 +1,8 @@
 const CACHE_NAME = 'uf-dining-v1';
 const urlsToCache = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/menuData.js'
 ];
 
 self.addEventListener('install', event => {
