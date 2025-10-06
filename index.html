@@ -10,6 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <title>UF Dining Tracker</title>
+    <script src="menuData.js"></script>
     <style>
         * {
             margin: 0;
@@ -168,7 +169,6 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .tab:hover {
@@ -194,7 +194,6 @@
             border-radius: 10px;
             transition: all 0.3s;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .menu-item:active {
@@ -241,7 +240,6 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .add-btn:active {
@@ -356,7 +354,6 @@
             cursor: pointer;
             font-size: 0.85em;
             transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .remove-btn:active {
@@ -374,7 +371,6 @@
             font-weight: 600;
             margin-top: 15px;
             transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .clear-all-btn:active {
@@ -410,7 +406,6 @@
             color: #333;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -469,14 +464,6 @@
 
         .ai-section {
             margin-bottom: 25px;
-        }
-
-        .ai-chat {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            min-height: 200px;
         }
 
         .ai-message {
@@ -623,34 +610,23 @@
             outline: none;
             border-color: #0021A5;
         }
-
-        @media (display-mode: standalone) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="install-prompt" id="install-prompt">
-            <span>📱 Install UF Dining Tracker as an app!</span>
+            <span>Install UF Dining Tracker as an app!</span>
             <button class="install-btn" id="install-button">Install</button>
         </div>
 
         <header>
-            <h1>🐊 UF Dining Tracker</h1>
+            <h1>UF Dining Tracker</h1>
             <p class="subtitle">Track your nutrition from Broward Dining Hall & Gator Corner</p>
         </header>
 
         <div class="action-buttons">
-            <button class="action-btn ai" onclick="openAIAssistant()">
-                🤖 AI Meal Assistant
-            </button>
-            <button class="action-btn history" onclick="openHistory()">
-                📊 View History
-            </button>
+            <button class="action-btn ai" onclick="openAIAssistant()">AI Meal Assistant</button>
+            <button class="action-btn history" onclick="openHistory()">View History</button>
         </div>
 
         <div class="main-content">
@@ -762,11 +738,10 @@
         </div>
     </div>
 
-    <!-- AI Assistant Modal -->
     <div class="modal" id="ai-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">🤖 AI Meal Assistant</div>
+                <div class="modal-title">AI Meal Assistant</div>
                 <button class="close-btn" onclick="closeModal('ai-modal')">&times;</button>
             </div>
             <div class="ai-section">
@@ -775,7 +750,6 @@
         </div>
     </div>
 
-    <!-- Goals Editor Modal -->
     <div class="modal" id="goals-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -804,11 +778,10 @@
         </div>
     </div>
 
-    <!-- History Modal -->
     <div class="modal" id="history-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📊 Nutrition History</div>
+                <div class="modal-title">Nutrition History</div>
                 <button class="close-btn" onclick="closeModal('history-modal')">&times;</button>
             </div>
             <div class="history-list" id="history-list"></div>
@@ -816,7 +789,6 @@
     </div>
 
     <script>
-        // PWA Installation
         let deferredPrompt;
         const installPrompt = document.getElementById('install-prompt');
         const installButton = document.getElementById('install-button');
@@ -844,66 +816,9 @@
             });
         }
 
-        const menuData = {
-            broward: {
-                breakfast: [
-                    { name: 'Scrambled Eggs', calories: 180, protein: 12, carbs: 2, fat: 14, fiber: 0, sugar: 1, sodium: 340, cholesterol: 370 },
-                    { name: 'Pancakes (2)', calories: 320, protein: 8, carbs: 58, fat: 7, fiber: 2, sugar: 12, sodium: 680, cholesterol: 45 },
-                    { name: 'Turkey Sausage', calories: 140, protein: 14, carbs: 2, fat: 8, fiber: 0, sugar: 1, sodium: 520, cholesterol: 55 },
-                    { name: 'Oatmeal', calories: 150, protein: 5, carbs: 27, fat: 3, fiber: 4, sugar: 1, sodium: 90, cholesterol: 0 },
-                    { name: 'Greek Yogurt', calories: 100, protein: 17, carbs: 6, fat: 0, fiber: 0, sugar: 6, sodium: 65, cholesterol: 10 },
-                    { name: 'Fresh Fruit Cup', calories: 80, protein: 1, carbs: 20, fat: 0, fiber: 3, sugar: 15, sodium: 0, cholesterol: 0 },
-                    { name: 'Bacon (3 strips)', calories: 130, protein: 9, carbs: 1, fat: 10, fiber: 0, sugar: 0, sodium: 480, cholesterol: 30 },
-                    { name: 'Hash Browns', calories: 180, protein: 2, carbs: 22, fat: 9, fiber: 2, sugar: 0, sodium: 340, cholesterol: 0 }
-                ],
-                lunch: [
-                    { name: 'Grilled Chicken Breast', calories: 165, protein: 31, carbs: 0, fat: 4, fiber: 0, sugar: 0, sodium: 380, cholesterol: 85 },
-                    { name: 'Cheeseburger', calories: 540, protein: 28, carbs: 42, fat: 28, fiber: 2, sugar: 8, sodium: 980, cholesterol: 95 },
-                    { name: 'Caesar Salad', calories: 200, protein: 8, carbs: 12, fat: 14, fiber: 3, sugar: 3, sodium: 520, cholesterol: 25 },
-                    { name: 'Pizza Slice (Pepperoni)', calories: 298, protein: 13, carbs: 34, fat: 12, fiber: 2, sugar: 4, sodium: 720, cholesterol: 28 },
-                    { name: 'French Fries', calories: 312, protein: 4, carbs: 41, fat: 15, fiber: 4, sugar: 0, sodium: 210, cholesterol: 0 },
-                    { name: 'Vegetable Stir Fry', calories: 180, protein: 8, carbs: 28, fat: 5, fiber: 5, sugar: 8, sodium: 420, cholesterol: 0 },
-                    { name: 'Grilled Cheese Sandwich', calories: 380, protein: 14, carbs: 32, fat: 22, fiber: 2, sugar: 4, sodium: 880, cholesterol: 55 },
-                    { name: 'Chicken Noodle Soup', calories: 120, protein: 9, carbs: 14, fat: 3, fiber: 1, sugar: 2, sodium: 890, cholesterol: 25 }
-                ],
-                dinner: [
-                    { name: 'Baked Salmon', calories: 280, protein: 34, carbs: 0, fat: 15, fiber: 0, sugar: 0, sodium: 320, cholesterol: 95 },
-                    { name: 'Spaghetti & Meatballs', calories: 520, protein: 26, carbs: 62, fat: 18, fiber: 5, sugar: 10, sodium: 980, cholesterol: 75 },
-                    { name: 'Roasted Chicken Thigh', calories: 225, protein: 24, carbs: 0, fat: 14, fiber: 0, sugar: 0, sodium: 340, cholesterol: 105 },
-                    { name: 'Steamed Broccoli', calories: 55, protein: 4, carbs: 11, fat: 1, fiber: 5, sugar: 3, sodium: 45, cholesterol: 0 },
-                    { name: 'Mashed Potatoes', calories: 210, protein: 4, carbs: 32, fat: 8, fiber: 3, sugar: 2, sodium: 380, cholesterol: 20 },
-                    { name: 'Beef Tacos (2)', calories: 420, protein: 22, carbs: 38, fat: 20, fiber: 6, sugar: 4, sodium: 780, cholesterol: 65 },
-                    { name: 'Garden Salad', calories: 80, protein: 3, carbs: 12, fat: 3, fiber: 4, sugar: 5, sodium: 95, cholesterol: 0 },
-                    { name: 'Chocolate Cake', calories: 350, protein: 4, carbs: 52, fat: 15, fiber: 2, sugar: 38, sodium: 320, cholesterol: 55 }
-                ]
-            },
-            gator: {
-                breakfast: [
-                    { name: 'Breakfast Burrito', calories: 450, protein: 22, carbs: 42, fat: 22, fiber: 4, sugar: 3, sodium: 920, cholesterol: 240 },
-                    { name: 'Bagel with Cream Cheese', calories: 340, protein: 12, carbs: 54, fat: 10, fiber: 2, sugar: 8, sodium: 520, cholesterol: 25 },
-                    { name: 'Smoothie Bowl', calories: 280, protein: 8, carbs: 52, fat: 6, fiber: 8, sugar: 32, sodium: 75, cholesterol: 0 },
-                    { name: 'Avocado Toast', calories: 320, protein: 10, carbs: 38, fat: 16, fiber: 10, sugar: 4, sodium: 480, cholesterol: 0 },
-                    { name: 'French Toast (2)', calories: 380, protein: 12, carbs: 52, fat: 14, fiber: 2, sugar: 18, sodium: 420, cholesterol: 165 },
-                    { name: 'Breakfast Sandwich', calories: 410, protein: 24, carbs: 32, fat: 20, fiber: 2, sugar: 4, sodium: 880, cholesterol: 245 }
-                ],
-                lunch: [
-                    { name: 'Chicken Wrap', calories: 420, protein: 28, carbs: 42, fat: 16, fiber: 4, sugar: 3, sodium: 820, cholesterol: 65 },
-                    { name: 'BBQ Pulled Pork', calories: 380, protein: 32, carbs: 24, fat: 16, fiber: 1, sugar: 18, sodium: 980, cholesterol: 90 },
-                    { name: 'Fish & Chips', calories: 620, protein: 26, carbs: 58, fat: 32, fiber: 4, sugar: 2, sodium: 1120, cholesterol: 75 },
-                    { name: 'Chicken Tenders (4)', calories: 440, protein: 28, carbs: 38, fat: 20, fiber: 2, sugar: 2, sodium: 980, cholesterol: 80 },
-                    { name: 'Veggie Burger', calories: 310, protein: 18, carbs: 42, fat: 10, fiber: 8, sugar: 6, sodium: 620, cholesterol: 0 },
-                    { name: 'Club Sandwich', calories: 520, protein: 32, carbs: 44, fat: 24, fiber: 3, sugar: 6, sodium: 1420, cholesterol: 85 }
-                ],
-                dinner: [
-                    { name: 'Beef Stir Fry', calories: 420, protein: 32, carbs: 38, fat: 16, fiber: 4, sugar: 12, sodium: 880, cholesterol: 75 },
-                    { name: 'Chicken Parmesan', calories: 540, protein: 38, carbs: 42, fat: 22, fiber: 4, sugar: 8, sodium: 1120, cholesterol: 105 },
-                    { name: 'Shrimp Scampi', calories: 380, protein: 28, carbs: 32, fat: 16, fiber: 2, sugar: 2, sodium: 920, cholesterol: 215 },
-                    { name: 'Veggie Pizza (2 slices)', calories: 480, protein: 18, carbs: 62, fat: 18, fiber: 6, sugar: 10, sodium: 980, cholesterol: 35 },
-                    { name: 'Rice Bowl with Tofu', calories: 380, protein: 16, carbs: 58, fat: 10, fiber: 6, sugar: 6, sodium: 680, cholesterol: 0 },
-                    { name: 'Pork Chop', calories: 320, protein: 30, carbs: 0, fat: 22, fiber: 0, sugar: 0, sodium: 420, cholesterol: 95 },
-                    { name: 'Mac & Cheese', calories: 420, protein: 16, carbs: 48, fat: 18, fiber: 2, sugar: 6, sodium: 880, cholesterol: 45 }
-                ]
-            }
+        let menuData = {
+            broward: { breakfast: [], lunch: [], dinner: [] },
+            gator: { breakfast: [], lunch: [], dinner: [] }
         };
 
         let currentMeals = { broward: 'breakfast', gator: 'breakfast' };
@@ -913,12 +828,33 @@
         let dailyHistory = [];
 
         function init() {
+            loadMenuData();
             loadGoals();
             loadHistory();
             renderMenu('broward');
             renderMenu('gator');
             setupSearchListeners();
             updateTracker();
+        }
+
+        function loadMenuData() {
+            if (window.menuData) {
+                menuData = {
+                    broward: {
+                        breakfast: window.menuData.broward_breakfast || [],
+                        lunch: window.menuData.broward_lunch || [],
+                        dinner: window.menuData.broward_dinner || []
+                    },
+                    gator: {
+                        breakfast: window.menuData.gator_corner_breakfast || [],
+                        lunch: window.menuData.gator_corner_lunch || [],
+                        dinner: window.menuData.gator_corner_dinner || []
+                    }
+                };
+                console.log('Menu data loaded successfully');
+            } else {
+                console.error('menuData.js not loaded!');
+            }
         }
 
         function loadGoals() {
@@ -940,11 +876,7 @@
             const totals = calculateTotals();
             
             const existingIndex = dailyHistory.findIndex(h => h.date === today);
-            const historyEntry = {
-                date: today,
-                ...totals,
-                items: trackedItems.length
-            };
+            const historyEntry = { date: today, ...totals, items: trackedItems.length };
 
             if (existingIndex >= 0) {
                 dailyHistory[existingIndex] = historyEntry;
@@ -981,9 +913,12 @@
             const items = menuData[hall][meal];
             const container = document.getElementById(`${hall}-menu`);
             
-            const filteredItems = items.filter(item => 
-                item.name.toLowerCase().includes(searchTerm)
-            );
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="empty-state">No menu items available</div>';
+                return;
+            }
+            
+            const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm));
             
             if (filteredItems.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items found</div>';
@@ -992,6 +927,7 @@
             
             container.innerHTML = filteredItems.map(item => {
                 const isRecommended = recommendedItems.some(r => r.name === item.name);
+                const itemJson = JSON.stringify(item).replace(/"/g, '&quot;');
                 return `
                     <div class="menu-item ${isRecommended ? 'recommended' : ''}">
                         <div class="item-info">
@@ -1003,7 +939,7 @@
                                 ${item.calories} cal | ${item.protein}g protein | ${item.carbs}g carbs | ${item.fat}g fat
                             </div>
                         </div>
-                        <button class="add-btn" onclick='addItem(${JSON.stringify(item)})'>Add</button>
+                        <button class="add-btn" onclick='addItem(${itemJson})'>Add</button>
                     </div>
                 `;
             }).join('');
@@ -1031,14 +967,14 @@
 
         function calculateTotals() {
             return trackedItems.reduce((acc, item) => ({
-                calories: acc.calories + item.calories,
-                protein: acc.protein + item.protein,
-                carbs: acc.carbs + item.carbs,
-                fat: acc.fat + item.fat,
-                fiber: acc.fiber + item.fiber,
-                sugar: acc.sugar + item.sugar,
-                sodium: acc.sodium + item.sodium,
-                cholesterol: acc.cholesterol + item.cholesterol
+                calories: acc.calories + (item.calories || 0),
+                protein: acc.protein + (item.protein || 0),
+                carbs: acc.carbs + (item.carbs || 0),
+                fat: acc.fat + (item.fat || 0),
+                fiber: acc.fiber + (item.fiber || 0),
+                sugar: acc.sugar + (item.sugar || 0),
+                sodium: acc.sodium + (item.sodium || 0),
+                cholesterol: acc.cholesterol + (item.cholesterol || 0)
             }), { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0, sodium: 0, cholesterol: 0 });
         }
 
@@ -1113,7 +1049,7 @@
             if (remaining.calories <= 0) {
                 aiContent.innerHTML = `
                     <div class="ai-message assistant">
-                        <strong>🎯 Goal Status:</strong>
+                        <strong>Goal Status:</strong>
                         <p>You've already met your calorie goal for today! Great job staying on track.</p>
                         <p>Current totals: ${Math.round(totals.calories)} calories, ${Math.round(totals.protein)}g protein, ${Math.round(totals.carbs)}g carbs, ${Math.round(totals.fat)}g fat</p>
                     </div>
@@ -1121,11 +1057,11 @@
             } else {
                 aiContent.innerHTML = `
                     <div class="ai-message assistant">
-                        <strong>🎯 Remaining Goals:</strong>
+                        <strong>Remaining Goals:</strong>
                         <p>Calories: ${Math.round(remaining.calories)} cal | Protein: ${Math.round(remaining.protein)}g | Carbs: ${Math.round(remaining.carbs)}g | Fat: ${Math.round(remaining.fat)}g</p>
                     </div>
                     <div class="ai-message assistant">
-                        <strong>💡 AI Recommendations:</strong>
+                        <strong>AI Recommendations:</strong>
                         <p>Based on your remaining macros, here are my top picks:</p>
                         ${recommendedItems.map((item, idx) => `
                             <div class="recommendation-item">
@@ -1199,9 +1135,7 @@
                 return { ...item, score, reason: reasons.join(', ') };
             });
 
-            return scored
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 5);
+            return scored.sort((a, b) => b.score - a.score).slice(0, 5);
         }
 
         function openGoalsEditor() {
@@ -1235,11 +1169,11 @@
                     <div class="history-item">
                         <div class="history-date">${formatDate(day.date)}</div>
                         <div class="history-stats">
-                            <div>📊 ${Math.round(day.calories)} calories</div>
-                            <div>🥩 ${Math.round(day.protein)}g protein</div>
-                            <div>🍞 ${Math.round(day.carbs)}g carbs</div>
-                            <div>🥑 ${Math.round(day.fat)}g fat</div>
-                            <div>🍽️ ${day.items} items</div>
+                            <div>${Math.round(day.calories)} calories</div>
+                            <div>${Math.round(day.protein)}g protein</div>
+                            <div>${Math.round(day.carbs)}g carbs</div>
+                            <div>${Math.round(day.fat)}g fat</div>
+                            <div>${day.items} items</div>
                         </div>
                     </div>
                 `).join('');
