@@ -833,25 +833,25 @@
             updateTracker();
         }
 
-        function loadMenuData() {
-            if (window.menuData) {
-                menuData = {
-                    broward: {
-                        breakfast: window.menuData.broward_breakfast || [],
-                        lunch: window.menuData.broward_lunch || [],
-                        dinner: window.menuData.broward_dinner || []
-                    },
-                    gator: {
-                        breakfast: window.menuData.gator_corner_breakfast || [],
-                        lunch: window.menuData.gator_corner_lunch || [],
-                        dinner: window.menuData.gator_corner_dinner || []
-                    }
-                };
-                console.log('Menu data loaded successfully');
-            } else {
-                console.error('menuData.js not loaded!');
+function loadMenuData() {
+    if (typeof window.menuData !== 'undefined' && window.menuData.broward_breakfast) {
+        window.localMenuData = {
+            broward: {
+                breakfast: window.menuData.broward_breakfast || [],
+                lunch: window.menuData.broward_lunch || [],
+                dinner: window.menuData.broward_dinner || []
+            },
+            gator: {
+                breakfast: window.menuData.gator_corner_breakfast || [],
+                lunch: window.menuData.gator_corner_lunch || [],
+                dinner: window.menuData.gator_corner_dinner || []
             }
-        }
+        };
+        console.log('Menu data loaded successfully');
+    } else {
+        console.error('menuData.js not loaded!');
+    }
+}
 
         function loadGoals() {
             const saved = localStorage.getItem('dailyGoals');
@@ -1212,4 +1212,5 @@
     </script>
 </body>
 </html>
+
 
